@@ -22,7 +22,7 @@ Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textur
 
 ## Results
 ![Results Image](assets/result.gif)
-- The results video appears lower quality due to GIF conversion. Please visit the project page to explore the high-quality, interactive 4K textured mesh.
+- The results video appears lower quality due to GIF conversion. Please visit the <a href='https://ncsoft.github.io/CaPa'>project page</a> to explore the high-quality, interactive 4K textured mesh.
 
 ## Licenses
 
