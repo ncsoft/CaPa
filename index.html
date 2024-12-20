@@ -1,0 +1,897 @@
+<!-- 
+    SPDX-FileCopyrightText: Ⓒ 2024 NCSOFT Corporation. All Rights Reserved.
+    SPDX-License-Identifier: BSD-3-Clause 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaPa: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/capa2.ico" />
+    <!-- Custom Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- AI Icons (AI library) CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Model Viewer CDN -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!-- model-viewer v2.1.3 -->
+    <!-- Copyright © 2018-2021 Google Inc. -->
+    <!-- Licensed under Apached 2.0 https://github.com/google/model-viewer/blob/master/LICENSE -->
+    <style>
+        a {
+            text-decoration: none;
+            color: #6610f2; 
+        }
+        a:hover {
+            text-decoration: underline; 
+            color: #6EA8FE; 
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            width: 50%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            width: 15%; /* Reduced width of the header column */
+            background-color: #f2f2f2; 
+        }
+        .mv-modal-box {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+
+            width: 40%;
+            height: 40%; 
+        }
+        .close-btn {
+            display: inline-block;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .model-viewer-container {
+            width: 100%;
+        }
+        .model-viewer {
+            width: 100%; 
+            height: 100px;
+            border-radius: 8px; 
+            display: block;
+            object-fit: contain;
+        }
+        @media (min-width: 640px) {
+            model-viewer {
+                height: 200px;
+            }
+        }
+        @media (min-width: 768px) {
+            model-viewer {
+                height: 300px;
+            }
+        }
+        @media (min-width: 1024px) {
+            model-viewer {
+                height: 400px;
+            }
+        }
+        /* @media (min-width: 1280px) {
+            model-viewer {
+                height: 500px;
+            }
+        } */
+        .carousel-item {
+            transition: transform 0.7s ease-in-out; 
+        }
+        .progress-container {
+            position: fixed;
+            width: 100%;
+            height: 0.4rem;
+            background: #ccc;
+            z-index: 9999;
+        }
+        .progress-bar {
+            height: 0.4rem;
+            background: #6EA8FE;
+            width: 0%;
+            z-index: 9999;
+        }
+        ol {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        ol li {
+            counter-increment: step-counter;
+            margin-bottom: 1rem;
+        }
+
+    </style>
+</head>
+<!-- scroll indicator-->
+<div class="progress-container">
+    <div class="progress-bar" id="myBar"></div>
+</div>
+<body class="d-flex flex-column h-100 bg-light">
+    <main class="flex-shrink-0">
+        <!-- Projects Section-->
+        <section class="py-5">
+            <br/> 
+            <div class="container px-5 mb-5 content">
+                <div class="text-center mb-5">
+                    <!-- Project Title -->
+                    <h1 class="display-5 fw-bolder mb-0">
+                        <span class="text-gradient d-inline">
+                            CaPa: Carve-n-Paint Synthesis <br/> for Efficient 4K Textured Mesh Generation
+                        </span>
+                    </h1>
+                    <!-- Alert -->
+                    <div class="fs-4 text-muted">
+                        <div style="color: #F9423A;">
+                            <i class="fa fa-bullhorn" style="color:#F9423A"> </i>
+                            Paper and demo coming soon. Stay tuned!
+                        </div>
+                    </div>
+                    <br/>
+                    <!-- Authos -->
+                    <div class="fs-6 text-muted">
+                        <div style="color:black">
+                            <a href="https://hwan-h-heo.github.io/hwan-h-heo.io/">Hwan Heo</a>, 
+                            <a href="https://scholar.google.com/citations?user=wXah-2MAAAAJ">Jangyeong Kim</a>, 
+                            <a href="https://www.linkedin.com/in/seongyeong-lee-b99914183?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app">Seongyeong Lee</a>, 
+                            <a href="https://www.linkedin.com/in/jaywican/">Jeong A Wi</a>, 
+                            Junyoung Choi,
+                            <!-- <a href="https://www.linkedin.com/in/sangjun-ahn-a39892180/"></a> -->
+                            Sangjun Ahn*
+                        </div>
+                    </div>
+                    <div class="fs-5 fw-bolder text-muted"> 
+                        <div style="color:black; margin-top: 0.5rem;">
+                            Graphics AI Lab, 
+                            NCSOFT Research
+                            <!-- <img class="img-fluid" src="assets/text_logo_black.svg" alt="nc research logo" style="height: 1.45rem; margin-bottom: 0.3rem;"> -->
+                        </div> 
+                    </div>
+                    <br/>
+                    <!-- Buttons -->
+                    <div style="margin-bottom: 0.3rem;">
+                        <div class="btn btn-outline-dark btn-sm px-3 py-2 fs-7" style="background-color:#333333; color: white; border: 1px solid black; border-radius: 15px;">
+                            <span class="icon">
+                                <i class="ai ai-arxiv"></i>
+                            </span>
+                            <span> Paper (coming soon) </span>
+                        </div>
+                        <div class="btn btn-outline-dark btn-sm px-3 py-2 fs-7" style="background-color:#333333; color: white; border: 1px solid black; border-radius: 15px;">
+                            <i class="fas fa-laptop"></i>
+                            <span> Online Demo (coming soon)</span>
+                        </div>
+                        <a class="btn btn-outline-dark btn-sm px-3 py-2 fs-7" href="https://github.com/ncsoft/CaPa" style="background-color:#333333; color: white; border: 1px solid black; border-radius: 15px;">
+                            <span class="icon">
+                                <i class="fab fa-github"></i>
+                            </span>
+                            <span> Github </span>
+                        </a>
+                    </div>
+                    <!-- Teaser Assets w/ auto-rotate -->
+                    <div class="row fs-5 text-muted justify-content-center">
+                        <div class="container-fluid p-0">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <model-viewer id="model-viewer-skull" 
+                                                src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/skull.glb" 
+                                                alt="3D Model Skull" 
+                                                lighting="none" 
+                                                camera-orbit="0deg 90deg 5m" 
+                                                auto-rotate 
+                                                rotation-per-second="60deg" 
+                                                style="width: 95%;">
+                                    </model-viewer>
+                                </div>
+                                <div class="col-4">
+                                    <model-viewer id="model-viewer-orc" 
+                                                src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/orc.glb" 
+                                                alt="3D Model Orc" 
+                                                lighting="none" 
+                                                camera-orbit="0deg 90deg 5m" 
+                                                auto-rotate 
+                                                rotation-per-second="60deg" 
+                                                style="width: 95%;">
+                                    </model-viewer>
+                                </div>
+                                <div class="col-4">
+                                    <model-viewer id="model-viewer-R2D2" 
+                                                src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/R2D2.glb" 
+                                                alt="3D Model R2D2" 
+                                                lighting="none" 
+                                                camera-orbit="0deg 90deg 5m" 
+                                                auto-rotate 
+                                                rotation-per-second="60deg" 
+                                                style="width: 95%;">
+                                    </model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="img-fluid" src="assets/teaser.png" width="95%" />
+                        <div style="color:black; margin-top: 0.5rem;">
+                            <strong> TL; DR: </strong> we propose <strong>CaPa</strong>, a novel method for generating high-quality <strong>4K textured mesh</strong> under only 30 seconds, <br/>
+                            providing 3D assets ready for commercial applications such as games, movies, and VR/AR.
+                        </div>
+                    </div>
+                </div>
+                <!-- Main Blocks -->
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-13 col-xl-12 col-xxl-11">
+                        <!-- Abstract -->
+                        <div class="col text-center text-lg-start mb-4 mb-lg-0">
+                            <div class="card shadow p-5 rounded-4">
+                                <p style="font-size: 1.5rem;">
+                                    <strong>Abstract</strong>
+                                </p>
+                                <div style="font-size: 1.1rem; text-align: justify;">
+                                    The synthesis of high-quality 3D assets from textual or visual inputs has become a central 
+                                    objective in modern generative modeling. 
+                                    Despite the proliferation of 3D generation algorithms, they frequently grapple with challenges such as multi-view inconsistency, slow generation times, low fidelity, and surface reconstruction problems. 
+                                    While some studies have addressed some of these issues, a comprehensive solution remains elusive.
+                                    In this paper, we introduce <strong>CaPa</strong>, a carve-and-paint framework that generates high-fidelity 3D assets efficiently. 
+                                    CaPa employs a two-stage process, decoupling geometry generation from texture synthesis. 
+                                    Initially, a 3D latent diffusion model generates geometry guided by multi-view inputs, ensuring structural consistency across perspectives. 
+                                    Subsequently, leveraging a novel, model-agnostic Spatially Decoupled Attention, the framework synthesizes high-resolution textures (up to 4K) for a given geometry. 
+                                    Furthermore, we propose a 3D-aware occlusion inpainting algorithm that fills untextured regions, resulting in cohesive results across the entire model. 
+                                    This pipeline generates high-quality 3D assets in less than 30 seconds, providing <em>ready-to-use outputs</em> for commercial applications.
+                                    Experimental results demonstrate that CaPa excels in both texture fidelity and geometric stability, establishing a new standard for practical, scalable 3D asset generation.
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <p><br/></p>
+
+                        <!-- Methodology -->
+                        <h2 class="text-secondary"> Methodology </h2>
+                        <hr/>
+                        <h3 class="text-success"> Overview </h3>
+                        <br/>
+                        <img class="img-fluid" src="assets/pipeline.png" width="100%" style="margin-top: -2rem; margin-bottom: 1rem;" />
+                        <p style="font-size: 1.08rem; text-align: justify;">
+                            <strong>Pipeline of CaPa</strong> 
+                            <ol>
+                                <li>
+                                    <strong>1. Geometry Generation:</strong> First, we generate geometry (polygonal mesh) using a 3D latent diffusion model. 
+                                    Using the learned 3D latent space with ShapeVAE, we train a 3D Latent Diffusion model that generates 3D geometries, 
+                                    guided by multi-view images from multi-view diffusion model to ensure alignment between the generated shape and texture.
+                                </li>
+                                <li>
+                                    <strong>2. Texture Generation:</strong> Second, we render four orthogonal views of the mesh, which serve as inputs for texture generation. 
+                                    To produce a high-quality texture while preventing the Janus problem, we design a novel, model-agnostic <strong><em>spatially decoupled attention</em>:</strong>
+                                    <ul style="margin-top: 0.3rem;">
+                                        <li style="margin-bottom: 0.3rem;">This mechanism ensures that each spatial region independently attends to its corresponding view, preserving view-specific details and enhancing multi-view consistency.</li>
+                                        <li>Its model-agnostic nature allows integration with any diffusion model, enabling extraordinary texture quality powered by <strong>SDXL</strong>, thus outperforms other 3D generation or texturing methods typically limited to SD1.5.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>Final Output:</strong> 
+                                    A hyper-quality textured mesh is obtained through back projection and a 3D-aware occlusion inpainting algorithm.
+                                    The entire 3D asset generation process is completed in less than 30 seconds using a fully feed-forward approach.
+                                </li>
+                            </ol>
+                            <!-- We first generate 3D geometry using a 3D latent diffusion model. 
+                            Using the learned 3D latent space with ShapeVAE, we train a 3D Latent Diffusion Model that generates 3D geometries, guided by multi-view images to ensure alignment between the generated shape and texture. 
+                            After the 3D geometry is created, we render four orthogonal views of the mesh, which serve as inputs for texture generation. 
+                            To produce a high-quality texture while preventing the Janus problem, we utilize a novel, model-agnostic <strong>spatially decoupled attention</strong>. 
+                            This mechanism ensures that each spatial region independently attends to its corresponding view, preserving view-specific details and enhancing multi-view consistency.
+                            Note that, its model-agnostic nature allows integration with any diffusion model, enabling extraordinary texture quality compared to other 3D generation and texturing methods limited to models like SD1.5.
+                            Finally, a hyper-quality textured mesh is obtained through back projection and a 3D-aware occlusion inpainting algorithm.
+                            The entire 3D asset generation process is completed in less than 30 seconds using a fully feed-forward approach. -->
+                        </p>
+                        <!-- <p> <br/> </p>
+                        <h3 class="text-success"> Spatially Decoupled Cross Attention </h3>
+                        <div class="row justify-content-center">
+                            <img class="img-fluid " src="assets/sdca.png" style="width:80%; margin-bottom: 1rem;" />
+                        </div>
+                        <p style="font-size: 1.08rem; text-align: justify;">
+                            <strong> Illustration of Spatially Decoupled Cross Attention.</strong> 
+                            To produce high-quality multi-view images for a given geometry, we design a novel, model-agnostic spatially decoupled attention mechanism. 
+                            During cross-attention in denoising U-Net, we replicate hidden feature channels so that each duplicated channels focuses solely on the designated view. 
+                            Since the design is model-agnostic, we can utilize an external ControlNet to guide the textures aligned with the input mesh.
+                        </p> -->
+                        <p> <br/> </p>
+
+                        <!-- Results -->       
+                        <h2 class="text-secondary"> Comparison: Image to 3D Asset Generation </h2>
+                        <hr/>
+                        <div class="container-fluid p-0">
+                            <div class="row g-0">
+                                <div class="col-2"> 
+                                    <table>
+                                        <tr>
+                                            <th>Input</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-10">
+                                    <div class="row g-0">
+                                        <div class="col-4"> 
+                                            <table>
+                                                <tr>
+                                                    <th>Ours</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-4"> 
+                                            <table>
+                                                <tr>
+                                                    <th><a href="https://wukailu.github.io/Unique3D/">Unique3D</a></th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-4"> 
+                                            <table>
+                                                <tr>
+                                                    <th><a href="https://stable-fast-3d.github.io/">SF3D</a></th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="carouselExampleIndicators" class="carousel carousel-dark slide" data-bs-touch="false"> <!-- data-bs-ride="carousel" data-bs-interval="15000" -->
+                                    <div class="carousel-indicators" style="transform: translateY(2rem);">
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" aria-label="Slide 6"></button>
+                                    </div>
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item active">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2"> 
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 2.5rem;">
+                                                                    <img class="img-fluid" src="assets/chair_comfort.jpg" alt="chair input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-chair_our" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ours_sofa.glb" 
+                                                                            alt="3D Model Chair_Ours" 
+                                                                            exposure="1.4"
+                                                                            lighting="none" 
+                                                                            camera-orbit="-30deg 70deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                                <div style="text-align: center;">
+                                                                    <button class="btn btn-outline-dark btn-sm open-model-btn" data-target="chair_our-modal" style="display: none;">Expand</button>
+                                                                    <!-- Modal Content -->
+                                                                    <div id="chair_our-modal" class="mv-modal-box">
+                                                                        <model-viewer 
+                                                                            id="model-viewer-chair_our-modal" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ours_sofa.glb" 
+                                                                            alt="3D Model Chair_Ours" 
+                                                                            camera-controls>
+                                                                        </model-viewer>
+                                                                        <button class="close-btn">Close</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-chair_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/sofa_u3d.glb" 
+                                                                            alt="3D Model Chair_U3D" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="0deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                                <div style="text-align: center;">
+                                                                    <button class="btn btn-success btn-sm open-model-btn" data-target="chair_u3d-modal" style="display: none;">Expand</button>
+                                                                    <!-- Modal Content -->
+                                                                    <div id="chair_u3d-modal" class="mv-modal-box">
+                                                                        <model-viewer 
+                                                                            id="model-viewer-chair_u3d-modal" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/sofa_u3d.glb" 
+                                                                            alt="3D Model Chair_U3D" 
+                                                                            camera-controls>
+                                                                        </model-viewer>
+                                                                        <button class="close-btn">Close</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-chair_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/sf3d_sofa.glb" 
+                                                                            alt="3D Model Chair_SF3D" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="0deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                                <div style="text-align: center;">
+                                                                    <button class="btn btn-success btn-sm open-model-btn" data-target="chair_sf3d-modal" style="display: none;">Expand</button>
+                                                                    <!-- Modal Content -->
+                                                                    <div id="chair_sf3d-modal" class="mv-modal-box">
+                                                                        <model-viewer 
+                                                                            id="model-viewer-chair_sf3d-modal" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/sf3d_sofa.glb" 
+                                                                            alt="3D Model Chair_SF3D" 
+                                                                            camera-controls>
+                                                                        </model-viewer>
+                                                                        <button class="close-btn">Close</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2">
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 2.5rem;">
+                                                                    <img class="img-fluid" src="assets/tigerc.png" alt="tiger input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-tiger_our" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/tiger.glb" 
+                                                                            alt="3D Model tiger_our" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="20deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-tiger_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/tiger_u3d.glb" 
+                                                                            alt="3D Model tiger_u3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="-15deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-tiger_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/sf3d_tiger.glb" 
+                                                                            alt="3D Model tiger_sf3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="-15deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2">
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 4rem;">
+                                                                    <img class="img-fluid" src="assets/iornman.jpg" alt="ironman input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ironman_our" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ironman.glb" 
+                                                                            alt="3D Model ironman_our" 
+                                                                            exposure="1.3"
+                                                                            lighting="none" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ironman_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ironman_u3d.glb" 
+                                                                            alt="3D Model ironman_u3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="-20deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ironman_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ironman_sf3d.glb" 
+                                                                            alt="3D Model ironman_sf3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="-20deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2">
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 4rem;">
+                                                                    <img class="img-fluid" src="assets/ghost.png" alt="ironman input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ghost_our" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ghost.glb" 
+                                                                            alt="3D Model ghost_our" 
+                                                                            exposure="1.7"
+                                                                            lighting="none" 
+                                                                            camera-orbit="30deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ghost_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ghost_u3d.glb" 
+                                                                            alt="3D Model ghost_u3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="50deg 90deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-ghost_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/ghost_sf3d.glb" 
+                                                                            alt="3D Model ghost_sf3d" 
+                                                                            camera-orbit="230deg 90deg 5m" 
+                                                                            lighting="none" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2">
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 4rem;">
+                                                                    <img class="img-fluid" src="assets/dino.png" alt="ironman input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-dino_our" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/dino.glb" 
+                                                                            alt="3D Model dino_our" 
+                                                                            exposure="1.2"
+                                                                            lighting="none" 
+                                                                            camera-orbit="0deg 85deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-dino_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/dino_u3d.glb" 
+                                                                            alt="3D Model dino_u3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="15deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-dino_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/dino_sf3d.glb" 
+                                                                            alt="3D Model dino_sf3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="15deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div>
+                                                <div class="row g-0">
+                                                    <div class="col-2">
+                                                        <div class="portfolio-box">
+                                                            <div class="polaroid">
+                                                                <div class="aspect-ratio-box" style="padding-top: 4rem;">
+                                                                    <img class="img-fluid" src="assets/Groot.png" alt="ironman input image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div class="row g-0">
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-groot" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/groot.glb" 
+                                                                            alt="3D Model groot" 
+                                                                            exposure="1.2"
+                                                                            lighting="none" 
+                                                                            camera-orbit="20deg 85deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-groot_u3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/groot_u3d.glb" 
+                                                                            alt="3D Model groot_u3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="20deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                            <div class="col-4"> 
+                                                                <model-viewer id="model-viewer-groot_sf3d" 
+                                                                            src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/groot_sf3d.glb" 
+                                                                            alt="3D Model groot_sf3d" 
+                                                                            lighting="none" 
+                                                                            camera-orbit="20deg 80deg 5m" 
+                                                                            camera-controls 
+                                                                            style="width: 100%; height: 300px;">
+                                                                </model-viewer>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                            <!-- Modal Backdrop -->
+                                            <div class="modal-backdrop"></div>
+
+                                        </div>
+                                    </div>
+                        </div>
+                        <p> <br/> </p>
+                        <div class="justify-content">
+                            <p>
+                                We compare CaPa with state-of-the-art Image-to-3D methods. 
+                                Here, all the assets are converted to <em>polygonal mesh</em>, using its official code. 
+                                CaPa significantly outperforms both <em><strong>geometry stability</strong> and <strong>visual fidelity</strong></em>, especially for the back and side view. 
+                            </p>
+                        </div>
+                        <p> <br/> </p>
+                        <h2 class="text-secondary"> Scalability & Adaptability </h2>
+                        <hr/>
+                        <h3 class="text-success"> PBR-aware 3D asset Generation </h3>
+                        <div class="container-fluid p-0">
+                            <div class="row g-0">
+                                <model-viewer 
+                                    id = "pbrViewer"
+                                    camera-controls 
+                                    touch-action="pan-y" 
+                                    skybox-image="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/spruit_sunrise_1k_HDR.hdr" 
+                                    src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/armor_PBR.glb" 
+                                    alt="3D Model Armor-PBR" 
+                                    style="width: 100%; height: 400px;">
+                                </model-viewer>
+                            </div>
+                        </div>
+                        <!-- Light Selector -->
+                        <div class="light-selector" style="margin-top: 10px;">
+                            <label for="lightSelect"> <strong>Light Environment:</strong> </label>
+                            <select id="lightSelect" style="font-size: 0.85rem;">
+                                <option value="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/spruit_sunrise_1k_HDR.hdr">Env 1</option>
+                                <option value="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/aircraft_workshop_01_1k.hdr">Env 2</option>
+                                <option value="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/lebombo_1k.hdr">Env 3</option>
+                            </select>
+                        </div>
+                        <div class="justify-content" style="display: none;">
+                            <p> 
+                                Combined with the off-the-shelf color-to-PBR decomposition model (<em>e.g.,</em> <a href="https://zheng95z.github.io/publications/rgbx24">RGB-X</a>), CaPa's pipeline can generate high-quality PBR-aware 3D assets.
+                            </p>
+                        </div>
+                        <br/>
+
+                        <h3 class="text-success"> Texture Editing </h3>
+                        <div class="container-fluid p-0">
+                            <div class="row g-0">
+                                <table>
+                                    <tr>
+                                        <th>Original</th>
+                                        <th>Edited w/ text prompt ("orange sofa, orange pulp")</th>
+                                    </tr>
+                                </table>
+                                <div class="col-lg-6 col-sm-6">
+                                    <model-viewer 
+                                        id="model-viewer-chair_org" 
+                                        src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/wchair_org.glb"
+                                        alt="3D Model Chair_Org" 
+                                        lighting="none" 
+                                        camera-controls 
+                                        style="width: 100%; height: 400px;">
+                                    </model-viewer>
+                                </div>
+                                <div class="col-lg-6 col-sm-6">
+                                    <model-viewer 
+                                        id="model-viewer-chair_edited" 
+                                        src="https://huggingface.co/spaces/hhhwan/custom_gs/resolve/main/glbs/wchair_mandarin.glb"
+                                        alt="3D Model Chair_Edited" 
+                                        lighting="none" 
+                                        camera-controls 
+                                        style="width: 100%; height: 400px;">
+                                    </model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content" style="display: none;">
+                            <p>
+                                CaPa's texturing stage can be further extended to the 3D texture editing from the text prompt.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer-->
+    <footer class="bg-white py-4 mt-auto">
+        <div class="container px-5">
+            <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                <div class="col-auto">
+                    <div class="small m-0">
+                        Copyright &copy; 2024 NCSOFT Corporation
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <!-- <a href="https://ncsoft.github.io/ncresearch/"> -->
+                    <img class="img-fluid" src="assets/text_logo_black.svg" style="height:1.2rem; margin-bottom: 0.4rem;">
+                    <!-- </a> -->
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const lightSelect = document.getElementById("lightSelect");
+            const modelViewer = document.getElementById("pbrViewer");
+
+            // Light changes
+            lightSelect.addEventListener("change", (event) => {
+                const selectedLight = event.target.value;
+                modelViewer.setAttribute("skybox-image", selectedLight);
+            });
+        });
+    </script>
+    <script>
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        const openButtons = document.querySelectorAll('.open-model-btn');
+        const closeButtons = document.querySelectorAll('.close-btn');
+        const modals = document.querySelectorAll('.mv-modal-box');
+
+        // Open Modal
+        openButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target'); // Get the ID of the target modal
+                const targetModal = document.getElementById(targetId);
+                if (targetModal) {
+                    targetModal.style.display = 'block';
+                    modalBackdrop.style.display = 'block';
+                }
+            });
+        });
+
+        // Close Modal
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.mv-modal-box'); // Find the closest modal box
+                modal.style.display = 'none';
+                modalBackdrop.style.display = 'none';
+            });
+        });
+
+        // Close Modal When Clicking Backdrop
+        modalBackdrop.addEventListener('click', () => {
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+            modalBackdrop.style.display = 'none';
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver(() => {
+                updateScrollIndicator();
+            });
+
+            document.querySelectorAll("model-viewer").forEach((viewer) => observer.observe(viewer));
+
+            window.onscroll = updateScrollIndicator;
+            window.onresize = updateScrollIndicator;
+
+            function updateScrollIndicator() {
+                var winScroll = document.documentElement.scrollTop;
+                var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (height > 0) {
+                    var scrolled = (winScroll / height) * 100;
+                    document.getElementById("myBar").style.width = scrolled + "%";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
