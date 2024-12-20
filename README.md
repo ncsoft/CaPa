@@ -6,15 +6,16 @@ Jeong A Wi,
 Junyoung Choi,
 Sangjun Ahn*
 
-<a href='https://hwan-h-heo.github.io/hwan-h-heo.io/'><img src="https://img.shields.io/badge/Paper (coming soon) -cc6699?style=for-the-badge" alt="CaPa Badge"></a> 
-<a href='https://hwan-h-heo.github.io/hwan-h-heo.io/'><img src="https://img.shields.io/badge/Project Page -28a745?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
+<a href='https://ncsoft.github.io/CaPa'><img src="https://img.shields.io/badge/Project Page -28a745?style=for-the-badge" alt="CaPa Badge"></a> 
+<a href=''><img src="https://img.shields.io/badge/Paper (coming soon) -cc6699?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
+
 
 Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation
 
 ![Teaser Vid](assets/teaser.gif)
 ![Teaser Image](assets/teaser.jpg)
 
-#### TL; DR: we propose CaPa, a novel method for generating high-quality 4K textured mesh under only 30 seconds, providing 3D assets ready for commercial applications such as games, movies, and VR/AR.
+#### TL; DR: we propose CaPa, a novel method for generating hyper-quality 4K textured mesh under only 30 seconds, providing 3D assets ready for commercial applications such as games, movies, and VR/AR.
 
 ## Overview
 ![Pipeline Image](assets/pipeline.jpg)
