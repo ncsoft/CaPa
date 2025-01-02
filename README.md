@@ -24,6 +24,10 @@ Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textur
 ![Results Image](assets/result.gif)
 - The results video appears lower quality due to GIF conversion. Please visit the <a href='https://ncsoft.github.io/CaPa'>project page</a> to explore the high-quality, interactive 4K textured mesh.
 
+## Related Project
+- <a href='https://ncsoft.github.io/CaPa'>***Texture Copilot*** </a> service in NCSOFT
+<iframe width="720" height="405" src="https://www.youtube.com/embed/HvyPxxDzrwo?si=fvLPdWsv613WCRTu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Licenses
 
 © 2024 NCSOFT Corporation. All Rights Reserved.
