@@ -31,10 +31,10 @@ Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textur
 
 ```bibtex
 @article{heo2025capa,
-    title         = {CaPa: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation}, 
-    author        = {Hwan Heo and Jangyeong Kim and Seongyeong Lee and Jeong A Wi and Junyoung Choi and Sangjun Ahn},
+    title = {CaPa: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation}, 
+    author = {Hwan Heo and Jangyeong Kim and Seongyeong Lee and Jeong A Wi and Junyoung Choi and Sangjun Ahn},
     journal = {arXiv preprint arXiv:2501.09433},
-    year          = {2025},
+    year = {2025},
 }
 ```
 
