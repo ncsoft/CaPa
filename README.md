@@ -7,7 +7,7 @@ Junyoung Choi,
 Sangjun Ahn*
 
 <a href='https://ncsoft.github.io/CaPa'><img src="https://img.shields.io/badge/Project Page -28a745?style=for-the-badge" alt="CaPa Badge"></a> 
-<a href='https://github.com/ncsoft/CaPa.git'><img src="https://img.shields.io/badge/Paper  -cc6699?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
+<a href='https://arxiv.org/abs/2501.09433'><img src="https://img.shields.io/badge/Paper  -cc6699?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
 
 
 Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation
