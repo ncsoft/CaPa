@@ -7,7 +7,8 @@ Junyoung Choi,
 Sangjun Ahn*
 
 <a href='https://ncsoft.github.io/CaPa'><img src="https://img.shields.io/badge/Project Page -28a745?style=for-the-badge" alt="CaPa Badge"></a> 
-<a href='https://arxiv.org/abs/2501.09433'><img src="https://img.shields.io/badge/Paper  -cc6699?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
+<a href='https://arxiv.org/abs/2501.09433'><img src="https://img.shields.io/badge/Paper  -cc6699?style=for-the-badge" alt="CaPa Badge"></a> 
+<a href='https://www.varco.ai/3d'><img src="https://img.shields.io/badge/Demo  -cc6699?style=for-the-badge" alt="CaPa Badge"></a> &nbsp;
 
 
 Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textured Mesh Generation
@@ -38,10 +39,10 @@ Official Repository of **CaPa**: Carve-n-Paint Synthesis for Efficient 4K Textur
 }
 ```
 
-## Related Project
-- <a href='https://ncsoft.github.io/ncresearch/3f0ba4889e331ddbed68c9dd48d845fa18d874de'>***Texture Copilot*** </a> service in NCSOFT
+## Project
+- <a href='https://ncsoft.github.io/ncresearch/3f0ba4889e331ddbed68c9dd48d845fa18d874de'>***Varco 3D*** </a> service in NCSOFT
 
-[![YouTube Video Thumbnail](https://img.youtube.com/vi/HvyPxxDzrwo/0.jpg)](https://www.youtube.com/embed/HvyPxxDzrwo?si=fvLPdWsv613WCRTu)
+[![YouTube Video Thumbnail](https://img.youtube.com/vi/AtQNAuQY4-A/0.jpg)](https://www.youtube.com/embed/AtQNAuQY4-A?si=TZAJ0nIvXeI57zwa)
 
 ## Licenses
 
